@@ -1,9 +1,10 @@
 /** Connect Four */
+"use strict";
 
 class Game {
-  constructor() {
-    this.HEIGHT = 6;
-    this.WIDTH = 7;
+  constructor(height = 6, width = 7) {
+    this.HEIGHT = height; //TODO:should be lowercase
+    this.WIDTH = width;
     this.currPlayer = 1;
     this.board = [];
 
@@ -25,6 +26,7 @@ class Game {
 
   makeHtmlBoard() {
     const board = document.getElementById("board");
+    board.innerHTML = "";
 
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement("tr");
@@ -33,7 +35,7 @@ class Game {
 
     for (let x = 0; x < this.WIDTH; x++) {
       const headCell = document.createElement("td");
-      headCell.setAttribute("id", `top-${x}`);
+      headCell.setAttribute("id", x);
       top.append(headCell);
     }
 
@@ -80,6 +82,7 @@ class Game {
     piece.style.top = -50 * (y + 2);
 
     const spot = document.getElementById(`c-${y}-${x}`);
+    console.log("spot", spot);
     spot.append(piece);
   }
 
@@ -93,7 +96,7 @@ class Game {
 
   handleClick(evt) {
     // get x from ID of clicked cell
-    const x = Number(evt.target.id.slice("top-".length));
+    const x = Number(evt.target.id);
 
     // get next spot in column (if none, ignore click)
 
@@ -107,7 +110,6 @@ class Game {
     this.placeInTable(y, x);
 
     // check for win
-    //TODO: might need to bind
     if (this.checkForWin()) {
       return this.endGame(`Player ${this.currPlayer} won!`);
     }
@@ -139,7 +141,7 @@ class Game {
       );
     }
 
-    const _newWin = _win.bind(this);
+    // const _newWin = _win.bind(this);
 
     for (let y = 0; y < this.HEIGHT; y++) {
       for (let x = 0; x < this.WIDTH; x++) {
@@ -171,7 +173,7 @@ class Game {
         ];
 
         // find winner (only checking each win-possibility as needed)
-        if (_newWin(horiz) || _newWin(vert) || _newWin(diagDR) || _newWin(diagDL)) {
+        if (_win.call(this, horiz) || _win.call(this, vert) || _win.call(this, diagDR) || _win.call(this, diagDL)) {
           return true;
         }
       }
@@ -179,8 +181,8 @@ class Game {
   }
 }
 
-const aGame = new Game(6, 7); // assuming constructor takes height, width
-console.log(aGame);
+new Game(4, 4); // assuming constructor takes height, width
+// console.log(aGame);
 
 // /**
 //  * Player 1 and 2 alternate turns. On each turn, a piece is dropped down a
