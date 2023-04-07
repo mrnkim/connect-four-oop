@@ -29,7 +29,7 @@ class Game {
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement("tr");
     top.setAttribute("id", "column-top");
-    top.addEventListener("click", this.handleClick);
+    top.addEventListener("click", this.handleClick.bind(this));
 
     for (let x = 0; x < this.WIDTH; x++) {
       const headCell = document.createElement("td");
@@ -63,6 +63,7 @@ class Game {
     }
     return null;
   }
+  // let newFindSpotForCol = findSpotForCol.bind(Game);
 
   //tried using bind and save it to a method
   // let newFindSpotForCol = findSpotForCol.bind(this);
@@ -96,7 +97,7 @@ class Game {
 
     // get next spot in column (if none, ignore click)
 
-    const y = findSpotForCol.bind(this);
+    const y = this.findSpotForCol(x);
     if (y === null) {
       return;
     }
@@ -106,7 +107,8 @@ class Game {
     this.placeInTable(y, x);
 
     // check for win
-    if (checkForWin()) {
+    //TODO: might need to bind
+    if (this.checkForWin()) {
       return endGame(`Player ${this.currPlayer} won!`);
     }
 
