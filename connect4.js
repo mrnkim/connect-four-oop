@@ -57,7 +57,7 @@ class Game {
 
   findSpotForCol(x) {
     for (let y = this.HEIGHT - 1; y >= 0; y--) {
-      if (!board[y][x]) {
+      if (!this.board[y][x]) {
         return y;
       }
     }
@@ -76,7 +76,7 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement("div");
     piece.classList.add("piece");
-    piece.classList.add(`p${currPlayer}`);
+    piece.classList.add(`p${this.currPlayer}`);
     piece.style.top = -50 * (y + 2);
 
     const spot = document.getElementById(`c-${y}-${x}`);
@@ -109,7 +109,7 @@ class Game {
     // check for win
     //TODO: might need to bind
     if (this.checkForWin()) {
-      return endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`Player ${this.currPlayer} won!`);
     }
 
     // check for tie
@@ -124,11 +124,11 @@ class Game {
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
   checkForWin() {
+
     function _win(cells) {
       // Check four cells to see if they're all color of current player
       //  - cells: list of four (y, x) cells
       //  - returns true if all are legal coordinates & all match currPlayer
-
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
@@ -138,6 +138,8 @@ class Game {
           this.board[y][x] === this.currPlayer
       );
     }
+
+    const _newWin = _win.bind(this);
 
     for (let y = 0; y < this.HEIGHT; y++) {
       for (let x = 0; x < this.WIDTH; x++) {
@@ -169,7 +171,7 @@ class Game {
         ];
 
         // find winner (only checking each win-possibility as needed)
-        if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
+        if (_newWin(horiz) || _newWin(vert) || _newWin(diagDR) || _newWin(diagDL)) {
           return true;
         }
       }
@@ -177,7 +179,8 @@ class Game {
   }
 }
 
-new Game(6, 7); // assuming constructor takes height, width
+const aGame = new Game(6, 7); // assuming constructor takes height, width
+console.log(aGame);
 
 // /**
 //  * Player 1 and 2 alternate turns. On each turn, a piece is dropped down a
