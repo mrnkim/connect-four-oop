@@ -2,15 +2,17 @@
 "use strict";
 
 class Game {
-  constructor(height = 6, width = 7) {
-    console.log("this = ", this);
+  constructor(p1, p2, height = 6, width = 7) {
+    this.p1 = p1;
+    this.p2 = p2;
     this.height = height; //TODO:should be lowercase -> fixed -> fixed rest of the issues in the test file
     this.width = width;
-    this.currPlayer = 1;
+    this.currPlayer = p1;
     this.board = [];
 
     this.makeBoard();
     this.makeHtmlBoard();
+    this.gameOver = false;
   }
 
   startGame() {
@@ -83,7 +85,7 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement("div");
     piece.classList.add("piece");
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.style.backgroundColor = this.currPlayer.color;
     piece.style.top = -50 * (y + 2);
 
     const spot = document.getElementById(`c-${y}-${x}`);
@@ -116,16 +118,18 @@ class Game {
 
     // check for win
     if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      this.gameOver = true;
+      return this.endGame(`The ${this.currPlayer.color} player won!`);
     }
 
     // check for tie
     if (this.board.every((row) => row.every((cell) => cell))) {
+      this.gameOver = true;
       return endGame("Tie!");
     }
 
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer === this.p1 ? this.p2 : this.p1;
   }
 
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -190,4 +194,19 @@ class Game {
   }
 }
 
-new Game(6, 7); // assuming constructor takes height, width
+// new Game(6, 7); // assuming constructor takes height, width
+
+class Player {
+  constructor(color) {
+    this.color = color;
+  }
+}
+
+const startBtn = document.querySelector("#start");
+startBtn.addEventListener("click", function () {
+  let p1Color = document.querySelector("#p1").value;
+  let p2Color = document.querySelector("#p2").value;
+  const p1 = new Player(p1Color);
+  const p2 = new Player(p2Color);
+  new Game(p1, p2);
+});
